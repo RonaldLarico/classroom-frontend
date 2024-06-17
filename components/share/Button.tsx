@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import type { HTMLMotionProps } from "framer-motion";
 import type { IconName } from "@/components/icon/Index";
 import Icon from "@/components/icon/Index";
-
 interface ButtonProps extends HTMLMotionProps<"button"> {
   iconName?: IconName;
   text?: string;
@@ -58,6 +57,11 @@ const Button = ({
       {text}
     </motion.button>
   );
+};
+
+Button.defaultProps = {
+  icon: null,
+  onClick: null,
 };
 
 export default Button;

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import * as Icons from "@/assets/icons";
+import * as Icons from "@/assets/icon";
 
 export type IconName = keyof typeof Icons;
 

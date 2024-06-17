@@ -1,6 +1,7 @@
 import { NextApiResponse, NextApiRequest } from 'next';
 import { setCookie } from 'nookies';
 import axios, { AxiosError } from 'axios';
+import { useContext } from 'react';
 
 export type Role = 'ADMIN' | 'USER';
 
@@ -81,7 +82,7 @@ function getUserSession(req: NextApiRequest) {
   return cookie ? JSON.parse(cookie.split(';').find(c => c.trim().startsWith('userId='))?.split('=')[1] || '') : null;
 }
 
-async function getUserToken(req: NextApiRequest) {
+export async function getUserToken(req: NextApiRequest) {
   const userId = getUserSession(req);
   if (!userId) return null;
   const newUser: {

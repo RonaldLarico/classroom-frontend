@@ -1,17 +1,13 @@
 import React from 'react'
-import Sidebar from '@/components/home/Index'
-import { useRouter } from 'next/router';
+import Sidebar from '@/components/home/Sidebar'
+
 
 const Home = () => {
-  const router = useRouter();
 
-  const navigateToSomePage = () => {
-    router.push('/some-page');
-  };
   return (
-    <section>
-      {router && <Sidebar router={router} />}
-    </section>
+    <div>
+      <Sidebar />
+    </div>
   )
 }
 
