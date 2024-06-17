@@ -5,13 +5,14 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AiOutlineUser, AiOutlineSearch } from "react-icons/ai";
+import { BsBoxArrowRight, BsBoxArrowLeft } from "react-icons/bs";
 import { FiFolder, FiShoppingCart } from "react-icons/fi";
 import { TbLogout2 } from "react-icons/tb";
 import { FaReadme } from "react-icons/fa6";
-import { Search, SearchIcon } from "./style";
 import Course from "../course/Index";
 import Post from "../posts/Index";
 import User from "../users/Index";
+import { Search, SearchIcon } from "./style";
 
 interface Menu {
   name: string;
@@ -31,6 +32,7 @@ const Sidebar: React.FC = () => {
     { name: "Setting", link: "/", icon: RiSettings4Line },
     { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
   ];
+
   const [open, setOpen] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -43,8 +45,8 @@ const Sidebar: React.FC = () => {
       if (searchRef.current !== null) {
         searchRef.current.focus();
       }
-    } else {
     }
+    // Aquí puedes añadir más lógica según sea necesario
   };
 
   const handleSidebarClick = (link: React.ComponentType<{ size: string }> | string) => {
@@ -56,86 +58,97 @@ const Sidebar: React.FC = () => {
       }
     });
   };
-  
+
   const handleClickMenu = () => {
-    if (typeof document !== 'undefined') {
-      setOpen(!open);
-      setIsOpen(!isOpen);
-    }
+    setOpen(!open);
+    setIsOpen(!isOpen);
   };
 
   return (
-    <section className="flex gap-6">
-      <div
-        className={`bg-primary-color min-h-screen ${
-          open ? "lg:w-56 w-40" : "lg:w-16 w-12"
-        } duration-500 text-gray-100 lg:px-4 px-2`}
-      >
-        <div className="py-3 flex justify-end">
-      {isOpen ? (
-        <HiMenuAlt3
-          size={30}
-          className="cursor-pointer hover:bg-secondary-color rounded-lg"
-          onClick={handleClickMenu}
-        />
-      ) : (
-        <HiX
-          size={30}
-          className="cursor-pointer hover:bg-secondary-color rounded-lg"
-          onClick={handleClickMenu}
-        />
-      )}
-    </div>
-        <Search
-          onClick={searchClickHandler}
-          style={!sidebarOpen ? { width: `fit-content` } : {}}
-        >
-          <SearchIcon>
-            <AiOutlineSearch />
-          </SearchIcon>
-          <input
-            ref={searchRef}
-            placeholder="Search"
-            style={!sidebarOpen ? { width: 0, padding: 0 } : {}}
-          />
-      </Search>
-        <div className="mt-4 flex flex-col gap-4 relative">
-          {menus?.map((menu, i) => (
-            <div key={i}>
-                <div
-                  onClick={() => handleSidebarClick(menu.link)}
-                  className={` ${
-                    menu?.margin && "mt-5"
-                  } group flex items-center text-sm  gap-3.5 font-medium p-2 hover:bg-secondary-color rounded-md cursor-pointer`}
-                >
-              <div>{React.createElement(menu?.icon, { size: "20" })}</div>
-              <h2
-                style={{
-                  transitionDelay: `${i + 3}00ms`,
-                }}
-                className={`whitespace-pre duration-500 ${
-                  !open && "opacity-0 translate-x-28 overflow-hidden"
-                }`}
-              >
-                {menu?.name}
-              </h2>
-              <h2
-                className={`${
-                  open && "hidden"
-                } absolute left-40 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
-              >
-                {menu?.name}
-              </h2>
-              </div>
-            </div>
-          ))}
+    <div className="flex flex-col h-screen overflow-hidden">
+      {/* Barra de menú superior */}
+      <div className="bg-primary-color text-gray-100 flex items-center px-4 py-5 shadow-md">
+        <div className="flex items-center gap-3">
+          <div>
+            {isOpen ? (
+              <BsBoxArrowRight
+                size={50}
+                className="cursor-pointer p-2 hover:bg-secondary-color rounded-lg"
+                onClick={handleClickMenu}
+              />
+            ) : (
+              <BsBoxArrowLeft
+                size={50}
+                className="cursor-pointer p-2 hover:bg-secondary-color rounded-lg"
+                onClick={handleClickMenu}
+              />
+            )}
+          </div>
+          <div className="relative" data-twe-input-wrapper-init>
+            <input
+              type="url"
+              className="peer block min-h-[auto] w-[600px] rounded-lg border-2 border-gray-300 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
+              id="exampleFormControlInputURL"
+              placeholder="Example label" />
+            <label
+              htmlFor="exampleFormControlInputURL"
+              className="pointer-events-none absolute left-3 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-100 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[twe-input-state-active]:-translate-y-[0.9rem] peer-data-[twe-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-100 dark:peer-focus:text-primary"
+              >Buscar
+            </label>
+          </div>
         </div>
       </div>
-      <div className="m-3 text-xl text-gray-900 font-semibold">
-      {selectedRoute && React.createElement(selectedRoute, { size: "80px" })}
+
+      {/* Contenedor principal para sidebar y contenido */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <div
+          className={`bg-primary-color ${open ? "lg:w-56 w-40" : "lg:w-16 w-12"} duration-500 text-gray-100 lg:px-4 px-2`}
+          style={{ marginTop: "0rem" }} // Espacio para la barra de menú superior fija
+        >
+          <div className="relative">
+            <div className="mt-4 flex flex-col gap-4 relative">
+              {menus?.map((menu, i) => (
+                <div key={i}>
+                  <div
+                    onClick={() => handleSidebarClick(menu.link)}
+                    className={`${
+                      menu?.margin && "mt-5"
+                    } group flex items-center text-sm gap-3.5 font-medium p-2 hover:bg-secondary-color rounded-md cursor-pointer`}
+                  >
+                    <div>{React.createElement(menu?.icon, { size: "20" })}</div>
+                    <h2
+                      style={{
+                        transitionDelay: `${i + 3}00ms`,
+                      }}
+                      className={`whitespace-pre duration-500 ${
+                        !open && "opacity-0 translate-x-28 overflow-hidden"
+                      }`}
+                    >
+                      {menu?.name}
+                    </h2>
+                    <h2
+                      className={`${
+                        open && "hidden"
+                      } absolute left-40 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
+                    >
+                      {menu?.name}
+                    </h2>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Contenido principal */}
+        <section className="flex-1 px-5 py-5 text-xl text-gray-900 font-semibold overflow-y-auto">
+          {selectedRoute && React.createElement(selectedRoute, { size: "80px" })}
+        </section>
       </div>
-    </section>
+    </div>
   );
 };
 
 export default Sidebar;
+
