@@ -16,7 +16,7 @@ const Course = () => {
 
   useEffect (() => {
   const onSubmit = async () => {
-    if (!validToken || !userId) return; 
+    if (!validToken || !userId) return;
     try {
       const id = userId;
       console.log("ID", id);
@@ -79,7 +79,7 @@ console.log("studentData:", studentData)
           );
         })
       ) : (
-        <p>No se encontraron grupos para mostrar.</p>
+        <p>No se encontraron cursos para mostrar.</p>
       )
     )}
   </div>

@@ -59,9 +59,9 @@ const Button = ({
   );
 };
 
-Button.defaultProps = {
+/* Button.defaultProps = {
   icon: null,
   onClick: null,
-};
+}; */
 
 export default Button;

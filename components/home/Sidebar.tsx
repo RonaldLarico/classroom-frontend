@@ -3,42 +3,30 @@ import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineDashboard } from "react-icons/md";
 import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
-import { AiOutlineUser, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
 import { BsBoxArrowRight, BsBoxArrowLeft } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { FiFolder, FiShoppingCart } from "react-icons/fi";
 import { TbLogout2 } from "react-icons/tb";
 import { FaReadme } from "react-icons/fa6";
 import Course from "../course/Index";
-import User from "../users/Index";
-import { StudentData } from '../interface/interface';
+import User from "../user/Index";
+import { Role, StudentData } from '../interface/interface';
 import { getToken, getUserId } from "../hook/hook";
 import axios from "axios";
 import tokenConfig, { URL } from "../utils/format/tokenConfig";
-
-interface Props {
-  studentData: StudentData | null;
-}
+import Cycle from "../cycle/Index";
+import Student from "../students/Index";
+import Group from "../group/Index";
 
 interface Menu {
   name: string;
-  link: React.ComponentType<{ size: string }> | string; // Puede ser un componente o una cadena (ruta)
+  link: React.ComponentType<any> | string; // Puede ser un componente o una cadena (ruta)
   icon: React.ComponentType<{ size: string }>;
   margin?: boolean;
 }
 
 const Sidebar: React.FC = () => {
-
-  const menus: Menu[] = [
-    { name: "dashboard", link: Course, icon: MdOutlineDashboard },
-    { name: "user", link: User, icon: AiOutlineUser },
-    { name: "Cursos", link: Course, icon: FaReadme },
-    { name: "analytics", link: "/users", icon: TbReportAnalytics, margin: true },
-    { name: "File Manager", link: "/", icon: FiFolder },
-    { name: "Cart", link: "/", icon: FiShoppingCart },
-    { name: "Setting", link: "/", icon: RiSettings4Line },
-    { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
-  ];
 
   const [open, setOpen] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
@@ -53,15 +41,15 @@ const Sidebar: React.FC = () => {
 
   useEffect (() => {
     const onSubmit = async () => {
-      if (!validToken || !userId) return; 
+      if (!validToken || !userId) return;
       try {
         const id = userId;
         console.log("ID", id);
-          const url = `${URL()}/student/${id}`;
-          const response = await axios.get(url, tokenConfig(validToken));
-  
-          setStudentData(response.data);
-          //setDataLoading(true);
+        const url = `${URL()}/student/${id}`;
+        const response = await axios.get(url, tokenConfig(validToken));
+
+        setStudentData(response.data);
+        //setDataLoading(true);
       } catch (error: any) {
         if (error && typeof error === 'object' && 'response' in error) {
           console.log(error.response.data);
@@ -75,7 +63,7 @@ const Sidebar: React.FC = () => {
       }
     }
     if (validToken) {
-    onSubmit();
+      onSubmit();
     }
   }, [validToken, userId]);
   console.log("studentData:", studentData)
@@ -95,6 +83,19 @@ const Sidebar: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
+  const menus: Menu[] = [
+    { name: "dashboard", link: Course, icon: MdOutlineDashboard },
+    { name: "user", link: User, icon: AiOutlineUser },
+    { name: "Cursos", link: Course, icon: FaReadme },
+    /* studentData?.role === Role.ADMIN ? { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true } : null,
+    studentData?.role === Role.ADMIN ? { name: "Estudiantes", link: Student, icon: FiFolder } : null, */
+    { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true },
+    { name: "Grupo", link: Group, icon: FiFolder },
+    { name: "Cart", link: "/", icon: FiShoppingCart },
+    { name: "Setting", link: "/", icon: RiSettings4Line },
+    { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
+  ].filter(Boolean) as Menu[];
+
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
       {/* Barra de menú superior */}
@@ -105,14 +106,12 @@ const Sidebar: React.FC = () => {
               <BsBoxArrowRight
                 size={50}
                 className="cursor-pointer p-2 hover:bg-secondary-color rounded-lg"
-                onClick={handleClickMenu}
-              />
+                onClick={handleClickMenu}/>
             ) : (
               <BsBoxArrowLeft
                 size={50}
                 className="cursor-pointer p-2 hover:bg-secondary-color rounded-lg"
-                onClick={handleClickMenu}
-              />
+                onClick={handleClickMenu}/>
             )}
           </div>
 
