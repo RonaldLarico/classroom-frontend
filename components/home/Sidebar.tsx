@@ -1,18 +1,24 @@
 "use client"
-import React, { useRef, useState } from "react";
-import { HiMenuAlt3, HiX } from "react-icons/hi";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineDashboard } from "react-icons/md";
 import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AiOutlineUser, AiOutlineSearch } from "react-icons/ai";
 import { BsBoxArrowRight, BsBoxArrowLeft } from "react-icons/bs";
+import { CgProfile } from "react-icons/cg";
 import { FiFolder, FiShoppingCart } from "react-icons/fi";
 import { TbLogout2 } from "react-icons/tb";
 import { FaReadme } from "react-icons/fa6";
 import Course from "../course/Index";
-import Post from "../posts/Index";
 import User from "../users/Index";
-import { Search, SearchIcon } from "./style";
+import { StudentData } from '../interface/interface';
+import { getToken, getUserId } from "../hook/hook";
+import axios from "axios";
+import tokenConfig, { URL } from "../utils/format/tokenConfig";
+
+interface Props {
+  studentData: StudentData | null;
+}
 
 interface Menu {
   name: string;
@@ -22,6 +28,7 @@ interface Menu {
 }
 
 const Sidebar: React.FC = () => {
+
   const menus: Menu[] = [
     { name: "dashboard", link: Course, icon: MdOutlineDashboard },
     { name: "user", link: User, icon: AiOutlineUser },
@@ -35,19 +42,43 @@ const Sidebar: React.FC = () => {
 
   const [open, setOpen] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const [selectedRoute, setSelectedRoute] = useState<React.ComponentType<{ size: string }> | null>(null);
+  const [studentData, setStudentData] = useState<StudentData | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
 
-  const searchClickHandler = () => {
-    if (!sidebarOpen) {
-      setSidebarOpen(true);
-      if (searchRef.current !== null) {
-        searchRef.current.focus();
+  const token = getToken();
+  const validToken = typeof token === "string" ? token : '';
+  const userId = getUserId(token)
+
+  useEffect (() => {
+    const onSubmit = async () => {
+      if (!validToken || !userId) return; 
+      try {
+        const id = userId;
+        console.log("ID", id);
+          const url = `${URL()}/student/${id}`;
+          const response = await axios.get(url, tokenConfig(validToken));
+  
+          setStudentData(response.data);
+          //setDataLoading(true);
+      } catch (error: any) {
+        if (error && typeof error === 'object' && 'response' in error) {
+          console.log(error.response.data);
+        } else if (error instanceof Error) {
+          console.log("Error desconocido", error.message);
+        } else {
+          console.log("Error:", error);
+        }
+      } finally {
+        setDataLoading(false)
       }
     }
-    // Aquí puedes añadir más lógica según sea necesario
-  };
+    if (validToken) {
+    onSubmit();
+    }
+  }, [validToken, userId]);
+  console.log("studentData:", studentData)
 
   const handleSidebarClick = (link: React.ComponentType<{ size: string }> | string) => {
     setSelectedRoute(() => {
@@ -65,9 +96,9 @@ const Sidebar: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden">
+    <div className="flex flex-col min-h-screen overflow-hidden">
       {/* Barra de menú superior */}
-      <div className="bg-primary-color text-gray-100 flex items-center px-4 py-5 shadow-md">
+      <div className="bg-primary-color text-gray-100 flex items-center justify-between px-4 py-5 shadow-md">
         <div className="flex items-center gap-3">
           <div>
             {isOpen ? (
@@ -84,7 +115,8 @@ const Sidebar: React.FC = () => {
               />
             )}
           </div>
-          <div className="relative" data-twe-input-wrapper-init>
+
+          <div className="relative lg:block hidden" data-twe-input-wrapper-init>
             <input
               type="url"
               className="peer block min-h-[auto] w-[600px] rounded-lg border-2 border-gray-300 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[twe-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-white dark:placeholder:text-neutral-300 dark:autofill:shadow-autofill dark:peer-focus:text-primary [&:not([data-twe-input-placeholder-active])]:placeholder:opacity-0"
@@ -96,7 +128,38 @@ const Sidebar: React.FC = () => {
               >Buscar
             </label>
           </div>
-        </div>
+              </div>
+
+        {studentData && (
+          <div className="text-gray-200 grid grid-cols-3 gap-2">
+            <div className="flex justify-end items-center text-5xl">
+              <CgProfile className="items-center"/>
+            </div>
+            <div className="p-2 font-mono">
+              <p className="truncate">{studentData.user}</p>
+              <p className="truncate">{studentData.name}</p>
+            </div>
+
+            <div className="p-2 font-mono">
+              <div className="flex items-center">
+                {studentData.active ? (
+                  <div className="flex items-center">
+                    <p className="mr-2">Activo</p>
+                    <div className="h-3 w-3 bg-green-500 rounded-full mr-1"></div>
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <p className="mr-2">Inactivo</p>
+                    <div className="h-3 w-3 bg-red-500 rounded-full mr-1"></div>
+                  </div>
+                )}
+              </div>
+              <div className="">
+                <p>{studentData.role ? 'Usuario' : 'Admin'}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Contenedor principal para sidebar y contenido */}
@@ -130,7 +193,7 @@ const Sidebar: React.FC = () => {
                     <h2
                       className={`${
                         open && "hidden"
-                      } absolute left-40 bg-white font-semibold whitespace-pre text-gray-900 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-14 group-hover:duration-300 group-hover:w-fit`}
+                      } absolute z-50 left-40 bg-primary-color font-semibold whitespace-pre text-gray-100 rounded-md drop-shadow-lg px-0 py-0 w-0 overflow-hidden group-hover:px-2 group-hover:py-1 group-hover:left-11 group-hover:duration-300 group-hover:w-fit`}
                     >
                       {menu?.name}
                     </h2>

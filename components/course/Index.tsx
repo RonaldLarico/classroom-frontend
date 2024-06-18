@@ -45,7 +45,7 @@ const Course = () => {
 console.log("studentData:", studentData)
 
   return (
-    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-10">
+    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
     {dataLoading ? (
       <p>Cargando datos...</p>
     ) : (
