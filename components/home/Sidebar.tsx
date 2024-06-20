@@ -17,6 +17,7 @@ import axios from "axios";
 import tokenConfig, { URL } from "../utils/format/tokenConfig";
 import Cycle from "../cycle/Index";
 import Group from "../group/Index";
+import Student from "../student/Index";
 
 interface Menu {
   name: string;
@@ -90,14 +91,13 @@ const Sidebar: React.FC = () => {
     studentData?.role === Role.ADMIN ? { name: "Estudiantes", link: Student, icon: FiFolder } : null, */
     { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true },
     { name: "Grupo", link: Group, icon: FiFolder },
-    { name: "Cart", link: "/", icon: FiShoppingCart },
+    { name: "Cart", link: Student, icon: FiShoppingCart },
     { name: "Setting", link: "/", icon: RiSettings4Line },
     { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
   ].filter(Boolean) as Menu[];
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
-      {/* Barra de menú superior */}
       <div className="bg-primary-color text-gray-100 flex items-center justify-between px-4 py-5 shadow-md">
         <div className="flex items-center gap-3">
           <div>

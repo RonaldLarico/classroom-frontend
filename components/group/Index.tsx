@@ -15,6 +15,7 @@ const Group = () => {
   const [selectedGroup, setSelectedGroup] = useState<GroupData | null>(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
+  const [isChecked, setIsChecked] = useState(true);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
@@ -40,7 +41,8 @@ const Group = () => {
     try {
       console.log("ID del grupo a eliminar:", id);
       if (id !== null) {
-        await axios.delete(`${URL()}/group/${id}`, tokenConfig(validToken));
+        const response = await axios.delete(`${URL()}/group/${id}`, tokenConfig(validToken));
+        console.log("Eliminación exitosa:", response.data);
         setConfirmationModalOpen(true); // Llamamos a la función de éxito de eliminación
         onSubmit();
       }
@@ -65,6 +67,11 @@ const Group = () => {
     setSelectedCycleId(null);
     setShowModal(false);
     setConfirmationModalOpen(false);
+  };
+  console.log("groupDatas:", groupData);
+
+  const toggleSwitch = () => {
+    setIsChecked(!isChecked);
   };
 
   return (
@@ -151,9 +158,17 @@ const Group = () => {
                 </button>
               </th>
               <th scope="row" className="px-6 py-4 text-center">
-                <button onClick={() => {setSelectedCycleId(group.id); setConfirmationModalOpen(true)}}>
-                  <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
-                </button>
+              <button onClick={() => {
+                if (group.id !== undefined) {
+                  console.log("ID del grupo seleccionado para eliminar:", group.id);
+                  setSelectedCycleId(group.id);
+                  setConfirmationModalOpen(true);
+                } else {
+                  console.error("ID del grupo es undefined:", group);
+                }
+              }}>
+                <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
+              </button>
               </th>
             </tr>
           ))}
@@ -205,10 +220,30 @@ const Group = () => {
               <th scope="row" className="px-6 py-4 text-center">
                 {student.student.role}
               </th>
-              <th scope="row" className="px-6 py-4 text-center">
-                <button /* onClick={() => {setSelectedCycleId(cycle.id); setConfirmationModalOpen(true)}} */>
-                  <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
-                </button>
+              <th scope="row" className="px-6 py-4 text-center inline-flex gap-5">
+                <div>
+                  <button /* onClick={() => {setSelectedCycleId(cycle.id); setConfirmationModalOpen(true)}} */>
+                    <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
+                  </button>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="simpleSwitch"
+                    className="hidden"
+                    checked={isChecked}
+                    onChange={toggleSwitch}
+                  />
+                  <label htmlFor="simpleSwitch" className={`relative w-10 h-6 transition duration-200 ease-in-out ${
+                      isChecked ? 'bg-primary-color' : 'bg-gray-300'
+                    } rounded-full cursor-pointer`}>
+                    <span className={`block absolute left-1 top-1 w-4 h-4 transition duration-200 ease-in-out ${
+                        isChecked ? 'transform translate-x-full bg-white' : 'bg-white'
+                      } rounded-full shadow-md`}>
+                    </span>
+                  </label>
+                  <span className="ml-3">{isChecked ? 'Habilitado' : 'Desabilitado'}</span>
+                </div>
               </th>
             </tr>
           ))}
@@ -225,7 +260,9 @@ const Group = () => {
             </p>
             <div className="flex justify-center mt-4">
               <button
-                onClick={() => handleDelete(selectedCycleId)}
+                onClick={() => {
+                  console.log("ID del grupo a eliminar en modal de confirmación:", selectedCycleId);
+                  handleDelete(selectedCycleId)}}
                 className="bg-error text-white px-4 py-2 rounded-md mr-2 hover:bg-red-600  font-mono">
                 Sí, eliminar
               </button>

@@ -6,6 +6,7 @@ import { RiDeleteBin5Line } from "react-icons/ri";
 import axios from "axios";
 import { CycleData } from "../interface/interface";
 import Modal from "../share/Modal";
+import Student from "../student/Index";
 
 const Cycle: React.FC = () => {
   const [cycleData, setCycleData] = useState<CycleData[]>();
@@ -18,6 +19,7 @@ const Cycle: React.FC = () => {
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [showStudent, setShowStudent] = useState(false);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : "";
@@ -76,6 +78,7 @@ const Cycle: React.FC = () => {
     setShowForm(false);
     setRegisteredModal(false);
     setConfirmationModalOpen(false);
+    setShowStudent(false);
   };
 
   const openTableModal = () => {
@@ -85,6 +88,10 @@ const Cycle: React.FC = () => {
 
   const closeTableModal = () => {
     setShowTableModal(false);
+  };
+
+  const handleInsertExcelClick = () => {
+    setShowStudent(true);
   };
 
   return (
@@ -100,11 +107,14 @@ const Cycle: React.FC = () => {
           className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color">
           Lista de ciclos
         </button>
-        <button
-          onClick={openTableModal}
-          className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color">
-          Insertar Excel
-        </button>
+       <button
+        className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color"
+        onClick={handleInsertExcelClick}
+      >
+        Insertar Excel
+      </button>
+
+      {showStudent && <Student show={showStudent} onClose={closeModal} />}
       </div>
       <Modal open={showForm} onClose={closeModal}>
         <div className="mt-3 mb-3 px-4">

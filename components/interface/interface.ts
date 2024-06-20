@@ -1,4 +1,4 @@
-import Student from '../students/Index';
+import Student from '../student/Index';
 
 export interface Group {
   studentId: number;
@@ -41,6 +41,7 @@ export interface GroupData {
     name: string;
   };
   students: Student[];
+  isChecked: boolean;
 };
 
 export interface Student {
