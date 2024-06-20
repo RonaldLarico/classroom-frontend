@@ -2,11 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useRouteData } from '../hook/hook';
 import tokenConfig, { URL } from '../utils/format/tokenConfig';
 import axios from 'axios';
-import { GroupData, StudentData } from '../interface/interface';
+import { GroupData } from '../interface/interface';
 import { RiDeleteBin5Line } from 'react-icons/ri';
-import Index from '@/components/course/Index';
+import ModalTable from '@/components/share/ModalTable';
 import Modal from '../share/Modal';
-import ModalTable from '../share/modalTable';
 
 const Group = () => {
 
@@ -14,6 +13,8 @@ const Group = () => {
   const [dataLoading, setDataLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<GroupData | null>(null);
+  const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
+  const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
@@ -35,17 +36,35 @@ const Group = () => {
     }
   }, [validToken, setGroupData, setDataLoading]);
 
+  const handleDelete = async (id: number | null) => {
+    try {
+      console.log("ID del grupo a eliminar:", id);
+      if (id !== null) {
+        await axios.delete(`${URL()}/group/${id}`, tokenConfig(validToken));
+        setConfirmationModalOpen(true); // Llamamos a la función de éxito de eliminación
+        onSubmit();
+      }
+    } catch (error) {
+      console.error('Error al eliminar grupo:', error);
+    } finally {
+        setConfirmationModalOpen(false);
+    }
+  };
+
   useEffect(() => {
     onSubmit();
   }, [onSubmit]);
 
   const openModal = (group: GroupData) => {
+    setSelectedCycleId(group.id);
     setSelectedGroup(group);
     setShowModal(true);
   };
-
+  
   const closeModal = () => {
+    setSelectedCycleId(null);
     setShowModal(false);
+    setConfirmationModalOpen(false);
   };
 
   return (
@@ -94,24 +113,21 @@ const Group = () => {
       </div>
 
       <table className="min-w-full text-left text-sm whitespace-nowrap text-gray-600">
-        <thead className="uppercase tracking-wider border-b-2 border-secondary-color bg-primary-color/35 border-t">
+        <thead className="uppercase tracking-wider border-b-2 border-primary-color bg-primary-color/35 border-t">
           <tr>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               #
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Nombre del grupo
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Nombre del ciclo
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Estudiantes
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
-              Estudiantes
-            </th>
-            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Acción
             </th>
           </tr>
@@ -119,32 +135,23 @@ const Group = () => {
 
         <tbody>
           {groupData?.map((group, index) => (
-            <tr key={index} className="border-b hover:bg-primary-color/35">
-              <th scope="row" className="px-6 py-4">
+            <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/50">
+              <th scope="row" className="px-6 py-4 text-center">
                 {index + 1}
               </th>
-              <th scope="row" className="px-6 py-4">
+              <th scope="row" className="px-6 py-4 text-center">
                 {group.groupName}
               </th>
-              <th scope="row" className="px-6 py-4">
+              <th scope="row" className="px-6 py-4 text-center">
                 {group.cycle.name}
               </th>
-              <th scope="row" className="px-6 py-4">
-                {group.students.map((student) =>(
-                  <div key={student.studentId} className='flex flex-col'>
-                  <p> {student.student.name}</p>
-                  <p> {student.student.role}</p>
-                  <p> {student.student.user}</p>
-                </div>
-                ))}
-              </th>
-              <th scope="row" className="px-6 py-4">
-                <button onClick={() => openModal(group)} className='text-primary-color text- underline'>
-                  Ver
+              <th scope="row" className="px-6 py-4 text-center">
+                <button onClick={() => openModal(group)} className='text-primary-color underline'>
+                  <p className='hover:scale-125 duration-300 font-mono text-lg'>Ver</p>
                 </button>
               </th>
-              <th scope="row" className="px-6 py-4">
-                <button /* onClick={() => {setSelectedCycleId(cycle.id); setConfirmationModalOpen(true)}} */>
+              <th scope="row" className="px-6 py-4 text-center">
+                <button onClick={() => {setSelectedCycleId(group.id); setConfirmationModalOpen(true)}}>
                   <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
                 </button>
               </th>
@@ -154,17 +161,82 @@ const Group = () => {
       </table>
       {showModal && selectedGroup && (
         <ModalTable open={showModal} onClose={closeModal}>
-          <h2>Detalles de los Estudiantes</h2>
-          {selectedGroup.students.map((student, index) => (
-            <div key={index} className='mb-4'>
-              <h3>Estudiante {index + 1}</h3>
-              <p>Nombre: {student.student.name}</p>
-              <p>Rol: {student.student.role}</p>
-              <p>Usuario: {student.student.user}</p>
-              {/* Más detalles si es necesario */}
+          <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
+          <div className='flex justify-between px-4'>
+            <div>
+              <p className='text-sm font-mono text-primary-color'>Grupo: <span className='text-lg text-error'>{selectedGroup.groupName}</span></p>
             </div>
+            <div>
+            <p className='text-sm font-mono text-primary-color'>Ciclo: <span className='text-lg text-error'>{selectedGroup.cycle.name}</span></p>
+            </div>
+          </div>
+          <table className="min-w-full text-left text-sm whitespace-nowrap text-gray-600">
+        <thead className="uppercase tracking-wider border-b-2 border-secondary-color bg-primary-color/35 border-t">
+          <tr>
+            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+              #
+            </th>
+            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+              Nombres y Apellidos
+            </th>
+            <th scope="col" className="px-6 py-4 border-x border-secondary-color">
+              Usuario
+            </th>
+            <th scope="col" className="px-6 py-4 border-x border-secondary-color text-center">
+              Rol
+            </th>
+            <th scope="col" className="px-6 py-4 border-x border-secondary-color text-center">
+              Acción
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {selectedGroup.students.map((student, index) => (
+            <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/50">
+              <th scope="row" className="px-6 py-4">
+                {index + 1}
+              </th>
+              <th scope="row" className="px-6 py-4">
+                {student.student.name}
+              </th>
+              <th scope="row" className="px-6 py-4">
+                {student.student.user}
+              </th>
+              <th scope="row" className="px-6 py-4 text-center">
+                {student.student.role}
+              </th>
+              <th scope="row" className="px-6 py-4 text-center">
+                <button /* onClick={() => {setSelectedCycleId(cycle.id); setConfirmationModalOpen(true)}} */>
+                  <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
+                </button>
+              </th>
+            </tr>
           ))}
-        </ModalTable>
+        </tbody>
+      </table>
+      </div>
+      </ModalTable>
+      )}
+      {confirmationModalOpen && (
+        <Modal open={confirmationModalOpen} onClose={closeModal}>
+          <div className='border p-5 rounded-lg'>
+            <p className='flex justify-center whitespace-pre-wrap text-center text-gray-100 font-mono'>
+              ¿Estás seguro de que deseas eliminar este ciclo?
+            </p>
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={() => handleDelete(selectedCycleId)}
+                className="bg-error text-white px-4 py-2 rounded-md mr-2 hover:bg-red-600  font-mono">
+                Sí, eliminar
+              </button>
+              <button
+                onClick={closeModal}
+                className="bg-primary-color text-gray-100 px-4 py-2 rounded-md hover:bg-cyan-500 font-mono">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   )

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MdOutlineDateRange, MdOutlineDatasetLinked } from 'react-icons/md';
 import { CgProfile } from "react-icons/cg";
+import Modal from './Modal';
+import ModalTable from './ModalTable';
 
 interface LinkObject {
   text: string;
@@ -31,6 +33,19 @@ const Card: React.FC<CardProps> = ({
   creatorName,
 }) => {
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedLink, setSelectedLink] = useState<LinkObject | null>(null);
+
+  const openModal = (link: LinkObject) => {
+    setSelectedLink(link)
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedLink(null);
+    setIsModalOpen(false);
+  };
+
   const renderArray = (array: string | string[] | undefined) => {
     if (Array.isArray(array)) {
       return array.map((item, index) => (
@@ -48,21 +63,38 @@ const Card: React.FC<CardProps> = ({
     }
   };
 
+  const openExternalContent = (url: string) => {
+    const newWindow = window.open('', '_blank', 'width=800,height=600,toolbar=no,location=no,status=no,menubar=no,scrollbars=yes,resizable=yes');
+    if (newWindow) {
+      newWindow.document.body.innerHTML = `
+        <html>
+          <head>
+            <title>External Content</title>
+          </head>
+          <body style="margin: 0; padding: 0; overflow: hidden;">
+            <iframe src="${url}" style="border: none; width: 100%; height: 100vh;"></iframe>
+          </body>
+        </html>
+      `;
+    }
+  };
+
   const renderLinks = (linkObject: LinkObject | LinkObject[]) => {
     if (Array.isArray(linkObject)) {
       return linkObject.map((link, index) => (
-        <a key={index} href={link.url} className='text-blue-500 hover:underline cursor-pointer' target='_blank' rel='noopener noreferrer'>
-          {link.text}
+        <a key={index} href='#' className='text-blue-500 hover:underline cursor-pointer'>
+          <button onClick={() => openExternalContent(link.url)}>{link.text}</button>
         </a>
       ));
     } else {
       return (
-        <a href={linkObject.url} className='text-blue-500 hover:underline cursor-pointer' onClick={() =>handleClick(linkObject.url)} target='_blank' rel='noopener noreferrer'>
-          {linkObject.text}
+        <a href='#' className='text-blue-500 hover:underline cursor-pointer'>
+          <button onClick={() => openExternalContent(linkObject.url)}>{linkObject.text}</button>
         </a>
       );
     }
   };
+  console.log("linkkkkkkkkkkkkkkkkkkkkkkkkkk:", selectedLink);
 
   return (
     <motion.div
@@ -163,6 +195,19 @@ const Card: React.FC<CardProps> = ({
         <CgProfile className='w-[40px] h-[40px] border-solid rounded-full mt-[10px] ml-5 text-gray-200' />
         <p className='mt-[13px] ml-2 text-gray-400'>Creation Of <span className='text-white'>{creatorName}</span></p>
       </motion.div>
+      {/* Modal para mostrar el iframe */}
+      <ModalTable open={isModalOpen} onClose={closeModal}>
+        {selectedLink && (
+          <iframe
+          title="Curso"
+          src={selectedLink.url}
+          width="100%"
+          height="700px"
+          frameBorder="0"
+          allowFullScreen
+          />
+        )}
+      </ModalTable>
     </motion.div>
   );
 };

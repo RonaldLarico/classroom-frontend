@@ -10,6 +10,8 @@ export interface Group {
       name: string;
     };
   };
+  secretKey: Buffer;
+  iv: Buffer;
 }
 
 export interface StudentData {

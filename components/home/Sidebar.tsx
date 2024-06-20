@@ -16,7 +16,6 @@ import { getToken, getUserId } from "../hook/hook";
 import axios from "axios";
 import tokenConfig, { URL } from "../utils/format/tokenConfig";
 import Cycle from "../cycle/Index";
-import Student from "../students/Index";
 import Group from "../group/Index";
 
 interface Menu {
