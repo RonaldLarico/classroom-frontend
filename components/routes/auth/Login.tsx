@@ -52,7 +52,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="relative h-screen w-full bg-gray-200 lg:bg-cyan-500">
+    <div className="relative h-screen w-full bg-gray-200 lg:bg-primary-color">
       <img src={loginbg} alt="" className="absolute bottom-0 w-full z-10" />
       <div className="flex items-center justify-center h-full w-full">
         <div className="hidden lg:block w-2/3 h-[90%]">

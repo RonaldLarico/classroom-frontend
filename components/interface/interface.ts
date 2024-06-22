@@ -5,6 +5,7 @@ export interface Group {
   groupId: number;
   group: {
     groupName: string;
+    date: string;
     link: string;
     cycle: {
       name: string;
@@ -36,21 +37,23 @@ export interface CycleData {
 export interface GroupData {
   id: number;
   groupName: string;
+  date: string;
   link: string;
   cycle: {
     name: string;
   };
   students: Student[];
-  isChecked: boolean;
 };
 
 export interface Student {
   studentId: number;
   groupId: number;
   student: {
+    id: number;
     name: string;
     user: string;
     role: string;
     active: boolean;
   };
+  isChecked: boolean;
 }

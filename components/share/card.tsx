@@ -10,14 +10,11 @@ interface LinkObject {
   url: string;
 }
 
-
 interface CardProps {
   imageUrl: string;
   title: string | string[];
   link: { text: string; url: string } | { text: string; url: string }[];
-  date: string;
-  duration: string;
-  groupName: string | string[];
+  date: string  | string[];
   cycleName?: string | string[];
   creatorName: string;
 }
@@ -27,8 +24,6 @@ const Card: React.FC<CardProps> = ({
   title,
   link,
   date,
-  duration,
-  groupName,
   cycleName,
   creatorName,
 }) => {
@@ -49,17 +44,20 @@ const Card: React.FC<CardProps> = ({
   const renderArray = (array: string | string[] | undefined) => {
     if (Array.isArray(array)) {
       return array.map((item, index) => (
-        <p key={index} className='text-gray-400' >{item}</p>
+        <p key={index}>{item}</p>
       ));
     } else {
-      return <p className='text-gray-400'>{array}</p>;
+      return <p className='text-gray-700 font-mono'>{array}</p>;
     }
   };
 
-  const handleClick = (url: string) => {
-    const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-    if (newWindow) {
-      newWindow.opener = null;
+  const renderDates = (dates: string | string[] | undefined) => {
+    if (Array.isArray(dates)) {
+      return dates.map((date, index) => (
+        <p key={index} className='text-gray-700 font-mono'>{date}</p>
+      ));
+    } else {
+      return <p className='text-gray-700 font-mono'>{dates}</p>;
     }
   };
 
@@ -82,14 +80,16 @@ const Card: React.FC<CardProps> = ({
   const renderLinks = (linkObject: LinkObject | LinkObject[]) => {
     if (Array.isArray(linkObject)) {
       return linkObject.map((link, index) => (
-        <a key={index} href='#' className='text-blue-500 hover:underline cursor-pointer'>
+        <a key={index} href='#' className='underline'>
           <button onClick={() => openExternalContent(link.url)}>{link.text}</button>
         </a>
       ));
     } else {
       return (
-        <a href='#' className='text-blue-500 hover:underline cursor-pointer'>
-          <button onClick={() => openExternalContent(linkObject.url)}>{linkObject.text}</button>
+        <a href='#' className='text-[#374BF6] font-mono cursor-pointer'>
+          <button onClick={() => openExternalContent(linkObject.url)} className='underline underline-offset-2 hover:scale-110 duration-300'>
+            {linkObject.text}
+          </button>
         </a>
       );
     }
@@ -101,7 +101,7 @@ const Card: React.FC<CardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="h-[500px] w-[300px] bg-[#065787] mx-auto rounded-xl overflow-hidden"
+      className="h-[400px] w-[300px] bg-gray-100 shadow-xl shadow-gray-500 mx-auto rounded-xl overflow-hidden"
     >
       <motion.img
         initial={{ opacity: 0 }}
@@ -111,23 +111,27 @@ const Card: React.FC<CardProps> = ({
         alt="Course Image"
         className="w-[278px] h-[230px] ml-[11.5px] absolute mt-[11.5px] rounded-xl"
       />
-      <div>
+      <div className='grid grid-cols-2'>
+        <div>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className='text-white font-bold ml-5 text-[15px] pt-[250px]'
+          className='text-red-600 font-bold ml-5 text-[20px] pt-[250px] font-mono'
         >
           {Array.isArray(title) ? title.join(', ') : title}
         </motion.p>
+        </div>
+        <div className=''>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className='text-gray-400 px-5'
+          className='pt-[250px] text-[15px] underline ml-10'
         >
           {renderLinks(link)}
         </motion.p>
+        </div>
       </div>
       <motion.div
         initial={{ opacity: 0 }}
@@ -142,17 +146,10 @@ const Card: React.FC<CardProps> = ({
             transition={{ duration: 0.5 }}
             className='inline-flex'
           >
-            <MdOutlineDateRange className='ml-5 mt-4 text-2xl' />
-            <p className='font-semibold text-sm text-[#10E9E7] mt-[18px] ml-1'>{date}</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className='inline-flex items-center'
-          >
-            <MdOutlineDatasetLinked className='ml-5 text-2xl' />
-            <p className='ml-1 text-sm text-gray-400'>{duration}</p>
+            <MdOutlineDateRange className='ml-4 mt-4 text-2xl text-yellow-500' />
+            <p className='font-semibold text-sm text-gray-700 mt-[18px] ml-1 font-mono'>
+            {renderDates(date)}
+            </p>
           </motion.div>
         </div>
         <div className='items-center'>
@@ -160,21 +157,10 @@ const Card: React.FC<CardProps> = ({
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className='inline-flex'
+            className='inline-flex items-center text-yellow-500 ml-5'
           >
-            <MdOutlineDateRange className='mt-4 text-2xl' />
-            <p className='font-semibold text-sm text-[#10E9E7] mt-[18px] ml-1'>
-              {renderArray(groupName)}
-            </p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className='inline-flex items-center'
-          >
-            <MdOutlineDatasetLinked className='text-2xl' />
-            <p className='text-sm text-gray-400 ml-1'>
+            <MdOutlineDatasetLinked className='text-2xl mt-4' />
+            <p className='text-sm ml-1 mt-[18px]'>
               {renderArray(cycleName)}
             </p>
           </motion.div>
@@ -184,7 +170,7 @@ const Card: React.FC<CardProps> = ({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 1 }}
-        className='w-[90%] mx-auto bg-zinc-300'
+        className='w-[90%] mx-auto text-red-600'
       />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -192,8 +178,8 @@ const Card: React.FC<CardProps> = ({
         transition={{ duration: 0.5, delay: 1.2 }}
         className='flex'
       >
-        <CgProfile className='w-[40px] h-[40px] border-solid rounded-full mt-[10px] ml-5 text-gray-200' />
-        <p className='mt-[13px] ml-2 text-gray-400'>Creation Of <span className='text-white'>{creatorName}</span></p>
+        <CgProfile className='w-[40px] h-[40px] border-solid rounded-full mt-[10px] ml-5 text-gray-700' />
+          <p className='text-gray-700 mt-[16px] ml-2'>{creatorName}</p>
       </motion.div>
       {/* Modal para mostrar el iframe */}
       <ModalTable open={isModalOpen} onClose={closeModal}>

@@ -22,7 +22,7 @@ const Course = () => {
       console.log("ID", id);
         const url = `${URL()}/student/${id}`;
         const response = await axios.get(url, tokenConfig(validToken));
-        console.log("Data:", response.data);
+        console.log("Student Data:", response.data);
 
         setStudentData(response.data);
         //setDataLoading(true);
@@ -54,13 +54,15 @@ console.log("studentData:", studentData)
           console.log("Group", group);
           const groupName = group.group && group.group.groupName ? group.group.groupName : '';
           console.log("groupName", groupName);
+          const date = group.group && group.group.date ? group.group.date : '';
+          console.log("date", date);
           const link = group.group && group.group.link ? group.group.link : '';
           console.log("link", link);
           const cycleName = group.group && group.group.cycle ? group.group.cycle.name : '';
           console.log("cycle", cycleName);
 
           const courseLink = {
-            text: 'Ver curso',
+            text: 'Ver curso...',
             url: link
           };
 
@@ -70,11 +72,9 @@ console.log("studentData:", studentData)
                 imageUrl='/image/sociales.png'
                 title={groupName}
                 link={courseLink}
-                date='2017-05-02'
-                duration='15 días'
-                groupName={groupName}
+                date={date}
                 cycleName={cycleName}
-                creatorName='Jules Newton'
+                creatorName='Cokito mas'
               />
           );
         })

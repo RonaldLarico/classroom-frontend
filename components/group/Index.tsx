@@ -15,7 +15,6 @@ const Group = () => {
   const [selectedGroup, setSelectedGroup] = useState<GroupData | null>(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
-  const [isChecked, setIsChecked] = useState(true);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
@@ -24,9 +23,14 @@ const Group = () => {
     try {
     const url = `${URL()}/groups`;
     const response = await axios.get(url, tokenConfig(validToken));
-    setGroupData(response.data);
-    console.log("grupo data:", response.data)
-    setDataLoading(true);
+    const groupsData: GroupData[] = response.data.map((group: GroupData) => ({
+      ...group,
+      students: group.students.map((student: any) => ({
+        ...student,
+        isChecked: false, // Inicializar isChecked para cada estudiante
+      })),
+    }));
+    setGroupData(groupsData);
     } catch (error: any) {
     if (error && typeof error === 'object' && 'response' in error) {
     } else if (error instanceof Error) {
@@ -70,9 +74,25 @@ const Group = () => {
   };
   console.log("groupDatas:", groupData);
 
-  const toggleSwitch = () => {
-    setIsChecked(!isChecked);
+  const toggleSwitch = (studentId: number) => {
+    if (selectedGroup) {
+      const updatedStudents = selectedGroup.students.map((student) => {
+        if (student.student.id === studentId) {
+          return {
+            ...student,
+            isChecked: !student.isChecked,
+          };
+        }
+        return student;
+      });
+  
+      setSelectedGroup((prevGroup) => ({
+        ...prevGroup!,
+        students: updatedStudents,
+      }));
+    }
   };
+  
 
   return (
     <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
@@ -126,10 +146,13 @@ const Group = () => {
               #
             </th>
             <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+              Nombre del ciclo
+            </th>
+            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Nombre del grupo
             </th>
             <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
-              Nombre del ciclo
+              Fecha
             </th>
             <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
               Estudiantes
@@ -147,10 +170,13 @@ const Group = () => {
                 {index + 1}
               </th>
               <th scope="row" className="px-6 py-4 text-center">
+                {group.cycle.name}
+              </th>
+              <th scope="row" className="px-6 py-4 text-center">
                 {group.groupName}
               </th>
               <th scope="row" className="px-6 py-4 text-center">
-                {group.cycle.name}
+                {group.date}
               </th>
               <th scope="row" className="px-6 py-4 text-center">
                 <button onClick={() => openModal(group)} className='text-primary-color underline'>
@@ -220,29 +246,24 @@ const Group = () => {
               <th scope="row" className="px-6 py-4 text-center">
                 {student.student.role}
               </th>
-              <th scope="row" className="px-6 py-4 text-center inline-flex gap-5">
-                <div>
-                  <button /* onClick={() => {setSelectedCycleId(cycle.id); setConfirmationModalOpen(true)}} */>
-                    <RiDeleteBin5Line className="text-2xl text-error hover:scale-125 duration-200 cursor-pointer" />
-                  </button>
-                </div>
-                <div className="flex items-center">
+              <th scope="row" className="px-6 py-4 text-center gap-5">
+                <div className="flex justify-center items-center">
                   <input
                     type="checkbox"
-                    id="simpleSwitch"
+                    id={`simpleSwitch-${student.student.id}`}
                     className="hidden"
-                    checked={isChecked}
-                    onChange={toggleSwitch}
+                    checked={student.isChecked}
+                    onChange={() => toggleSwitch(student.student.id)}
                   />
-                  <label htmlFor="simpleSwitch" className={`relative w-10 h-6 transition duration-200 ease-in-out ${
-                      isChecked ? 'bg-primary-color' : 'bg-gray-300'
+                  <label htmlFor={`simpleSwitch-${student.student.id}`} className={`relative w-10 h-6 transition duration-200 ease-in-out ${
+                      student.isChecked ? 'bg-primary-color' : 'bg-gray-500'
                     } rounded-full cursor-pointer`}>
                     <span className={`block absolute left-1 top-1 w-4 h-4 transition duration-200 ease-in-out ${
-                        isChecked ? 'transform translate-x-full bg-white' : 'bg-white'
+                        student.isChecked ? 'transform translate-x-full bg-white' : 'bg-white'
                       } rounded-full shadow-md`}>
                     </span>
                   </label>
-                  <span className="ml-3">{isChecked ? 'Habilitado' : 'Desabilitado'}</span>
+                  <span className="ml-3">{student.isChecked ? 'Habilitado' : 'Desabilitado'}</span>
                 </div>
               </th>
             </tr>

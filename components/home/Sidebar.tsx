@@ -98,7 +98,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
-      <div className="bg-primary-color text-gray-100 flex items-center justify-between px-4 py-5 shadow-md">
+      <div className="bg-[#374BF6] text-gray-100 flex items-center justify-between px-4 py-5 shadow-md">
         <div className="flex items-center gap-3">
           <div>
             {isOpen ? (
@@ -126,7 +126,7 @@ const Sidebar: React.FC = () => {
               >Buscar
             </label>
           </div>
-              </div>
+        </div>
 
         {studentData && (
           <div className="text-gray-200 grid grid-cols-3 gap-2">
@@ -164,7 +164,7 @@ const Sidebar: React.FC = () => {
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
         <div
-          className={`bg-primary-color ${open ? "lg:w-56 w-40" : "lg:w-16 w-12"} duration-500 text-gray-100 lg:px-4 px-2`}
+          className={`bg-[#374BF6] ${open ? "lg:w-56 w-40" : "lg:w-16 w-12"} duration-500 text-gray-100 lg:px-4 px-2`}
           style={{ marginTop: "0rem" }} // Espacio para la barra de menú superior fija
         >
           <div className="relative">

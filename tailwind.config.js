@@ -12,7 +12,7 @@ module.exports = {
     extend: {
       colors: {
         ///BRAND
-        "primary-color": "#00A7E1",
+        "primary-color": "#374BF6",
         "primary-color-gradient": "#B8E4F3",
         "secondary-color": "#9381E5",
         "secondary-color-gradient": "#CBC6E4",
