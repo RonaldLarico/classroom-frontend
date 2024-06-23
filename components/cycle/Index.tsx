@@ -107,7 +107,7 @@ const Cycle: React.FC = () => {
           className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color">
           Lista de ciclos
         </button>
-       <button
+      <button
         className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color"
         onClick={handleInsertExcelClick}
       >

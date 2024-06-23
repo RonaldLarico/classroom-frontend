@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useSelector, useDispatch, Provider } from 'react-redux';
 import { useRouteData } from '../hook/hook';
 import tokenConfig, { URL } from '../utils/format/tokenConfig';
 import axios from 'axios';
@@ -6,15 +7,22 @@ import { GroupData } from '../interface/interface';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import ModalTable from '@/components/share/ModalTable';
 import Modal from '../share/Modal';
+import store, { RootState } from '@/store';
+import { toggleIndividualCheckbox, toggleSelectAll, setGroupData } from '../utils/format/actions';
 
 const Group = () => {
 
-  const [groupData, setGroupData] = useState<GroupData[]>([]);
+  const dispatch = useDispatch();
+  const groupData = useSelector((state: RootState) => state.checkbox.groupData);
+  const selectAllChecked = useSelector((state: RootState) => state.checkbox.selectAllChecked);
+
+  const [groupDatas, setGroupDatas] = useState<GroupData[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<GroupData | null>(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
+  //const [selectAllCheckedd, setSelectAllChecked] = useState(true);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
@@ -27,10 +35,11 @@ const Group = () => {
       ...group,
       students: group.students.map((student: any) => ({
         ...student,
-        isChecked: false, // Inicializar isChecked para cada estudiante
+        isChecked: student.isChecked !== undefined ? student.isChecked : true, // Inicializar isChecked para cada estudiante
       })),
     }));
-    setGroupData(groupsData);
+    dispatch(setGroupData(groupsData));
+    setGroupDatas(groupsData)
     } catch (error: any) {
     if (error && typeof error === 'object' && 'response' in error) {
     } else if (error instanceof Error) {
@@ -39,7 +48,7 @@ const Group = () => {
         console.log("Error:", error);
     }
     }
-  }, [validToken, setGroupData, setDataLoading]);
+  }, [validToken, dispatch, setDataLoading]);
 
   const handleDelete = async (id: number | null) => {
     try {
@@ -69,10 +78,23 @@ const Group = () => {
   
   const closeModal = () => {
     setSelectedCycleId(null);
+    setSelectedGroup(null);
     setShowModal(false);
     setConfirmationModalOpen(false);
   };
   console.log("groupDatas:", groupData);
+
+ /*  const handleSelectAll = () => {
+    const updatedGroupData = groupData.map(group => ({
+      ...group,
+      students: group.students.map(student => ({
+        ...student,
+        isChecked: !selectAllChecked,
+      })),
+    }));
+    setGroupData(updatedGroupData);
+    setSelectAllChecked(!selectAllChecked);
+  };
 
   const toggleSwitch = (studentId: number) => {
     if (selectedGroup) {
@@ -85,12 +107,27 @@ const Group = () => {
         }
         return student;
       });
-  
-      setSelectedGroup((prevGroup) => ({
-        ...prevGroup!,
+      const updatedGroup = {
+        ...selectedGroup,
         students: updatedStudents,
-      }));
+      };
+      setSelectedGroup(updatedGroup);
+      const updatedGroupData = groupData.map((group) => {
+        if (group.id === updatedGroup.id) {
+          return updatedGroup;
+        }
+        return group;
+      });
+      setGroupData(updatedGroupData);
     }
+  }; */
+
+  const handleSelectAll = () => {
+    dispatch(toggleSelectAll()); // Despachar acción para alternar selectAllChecked en el store de Redux
+  };
+
+  const toggleSwitch = (studentId: number) => {
+    dispatch(toggleIndividualCheckbox(studentId)); // Despachar acción para alternar isChecked de un estudiante en el store de Redux
   };
   
 
@@ -164,7 +201,7 @@ const Group = () => {
         </thead>
 
         <tbody>
-          {groupData?.map((group, index) => (
+          {groupDatas?.map((group, index) => (
             <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/50">
               <th scope="row" className="px-6 py-4 text-center">
                 {index + 1}
@@ -203,10 +240,28 @@ const Group = () => {
       {showModal && selectedGroup && (
         <ModalTable open={showModal} onClose={closeModal}>
           <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
-          <div className='flex justify-between px-4'>
+          <div className='flex justify-center px-4 gap-96'>
             <div>
               <p className='text-sm font-mono text-primary-color'>Grupo: <span className='text-lg text-error'>{selectedGroup.groupName}</span></p>
             </div>
+            <div className="flex justify-center items-center">
+                  <input
+                    type="checkbox"
+                    id={`simpleSwitch-`}
+                    className="hidden"
+                    checked={selectAllChecked}
+                    onChange={() => handleSelectAll()}
+                  />
+                  <label htmlFor={`simpleSwitch-`} className={`relative w-10 h-6 transition duration-200 ease-in-out ${
+                      selectAllChecked ? 'bg-primary-color' : 'bg-gray-500'
+                    } rounded-full cursor-pointer`}>
+                    <span className={`block absolute left-1 top-1 w-4 h-4 transition duration-200 ease-in-out ${
+                        selectAllChecked ? 'transform translate-x-full bg-white' : 'bg-white'
+                      } rounded-full shadow-md`}>
+                    </span>
+                  </label>
+                  <span className="ml-3">{selectAllChecked ? 'Habilitado' : 'Desabilitado'}</span>
+                </div>
             <div>
             <p className='text-sm font-mono text-primary-color'>Ciclo: <span className='text-lg text-error'>{selectedGroup.cycle.name}</span></p>
             </div>
@@ -300,4 +355,11 @@ const Group = () => {
   )
 }
 
-export default Group
+
+const GroupWithProvider = () => (
+  <Provider store={store}>
+    <Group />
+  </Provider>
+);
+
+export default GroupWithProvider;
