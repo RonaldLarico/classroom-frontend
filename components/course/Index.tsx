@@ -23,7 +23,6 @@ const Course = () => {
         const url = `${URL()}/student/${id}`;
         const response = await axios.get(url, tokenConfig(validToken));
         console.log("Student Data:", response.data);
-
         setStudentData(response.data);
         //setDataLoading(true);
     } catch (error: any) {

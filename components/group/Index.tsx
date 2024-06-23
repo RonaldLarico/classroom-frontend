@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { useSelector, useDispatch, Provider } from 'react-redux';
 import { useRouteData } from '../hook/hook';
 import tokenConfig, { URL } from '../utils/format/tokenConfig';
 import axios from 'axios';
@@ -7,22 +6,15 @@ import { GroupData } from '../interface/interface';
 import { RiDeleteBin5Line } from 'react-icons/ri';
 import ModalTable from '@/components/share/ModalTable';
 import Modal from '../share/Modal';
-import store, { RootState } from '@/store';
-import { toggleIndividualCheckbox, toggleSelectAll, setGroupData } from '../utils/format/actions';
 
 const Group = () => {
-
-  const dispatch = useDispatch();
-  const groupData = useSelector((state: RootState) => state.checkbox.groupData);
-  const selectAllChecked = useSelector((state: RootState) => state.checkbox.selectAllChecked);
-
-  const [groupDatas, setGroupDatas] = useState<GroupData[]>([]);
+  const [groupData, setGroupData] = useState<GroupData[]>([]);
   const [dataLoading, setDataLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<GroupData | null>(null);
   const [confirmationModalOpen, setConfirmationModalOpen] = useState(false);
   const [selectedCycleId, setSelectedCycleId] = useState<number | null>(null);
-  //const [selectAllCheckedd, setSelectAllChecked] = useState(true);
+  const [selectAllChecked, setSelectAllChecked] = useState(true);
 
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
@@ -35,11 +27,10 @@ const Group = () => {
       ...group,
       students: group.students.map((student: any) => ({
         ...student,
-        isChecked: student.isChecked !== undefined ? student.isChecked : true, // Inicializar isChecked para cada estudiante
+        isChecked: student.isChecked !== undefined ? student.isChecked : false, // Inicializar isChecked para cada estudiante
       })),
     }));
-    dispatch(setGroupData(groupsData));
-    setGroupDatas(groupsData)
+    setGroupData(groupsData)
     } catch (error: any) {
     if (error && typeof error === 'object' && 'response' in error) {
     } else if (error instanceof Error) {
@@ -48,7 +39,7 @@ const Group = () => {
         console.log("Error:", error);
     }
     }
-  }, [validToken, dispatch, setDataLoading]);
+  }, [validToken, setGroupData, setDataLoading]);
 
   const handleDelete = async (id: number | null) => {
     try {
@@ -75,7 +66,7 @@ const Group = () => {
     setSelectedGroup(group);
     setShowModal(true);
   };
-  
+
   const closeModal = () => {
     setSelectedCycleId(null);
     setSelectedGroup(null);
@@ -84,7 +75,7 @@ const Group = () => {
   };
   console.log("groupDatas:", groupData);
 
- /*  const handleSelectAll = () => {
+    const handleSelectAll = () => {
     const updatedGroupData = groupData.map(group => ({
       ...group,
       students: group.students.map(student => ({
@@ -120,16 +111,7 @@ const Group = () => {
       });
       setGroupData(updatedGroupData);
     }
-  }; */
-
-  const handleSelectAll = () => {
-    dispatch(toggleSelectAll()); // Despachar acción para alternar selectAllChecked en el store de Redux
   };
-
-  const toggleSwitch = (studentId: number) => {
-    dispatch(toggleIndividualCheckbox(studentId)); // Despachar acción para alternar isChecked de un estudiante en el store de Redux
-  };
-  
 
   return (
     <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
@@ -201,7 +183,7 @@ const Group = () => {
         </thead>
 
         <tbody>
-          {groupDatas?.map((group, index) => (
+          {groupData?.map((group, index) => (
             <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/50">
               <th scope="row" className="px-6 py-4 text-center">
                 {index + 1}
@@ -292,32 +274,37 @@ const Group = () => {
               <th scope="row" className="px-6 py-4">
                 {index + 1}
               </th>
-              <th scope="row" className="px-6 py-4">
-                {student.student.name}
-              </th>
+              {student.student && (
+                <th scope="row" className="px-6 py-4">
+                  {student.student.name}
+                </th>
+              )}
+              {student.student && (
               <th scope="row" className="px-6 py-4">
                 {student.student.user}
               </th>
+              )}
+              {student.student && (
               <th scope="row" className="px-6 py-4 text-center">
                 {student.student.role}
               </th>
+              )}
               <th scope="row" className="px-6 py-4 text-center gap-5">
                 <div className="flex justify-center items-center">
-                  <input
-                    type="checkbox"
-                    id={`simpleSwitch-${student.student.id}`}
-                    className="hidden"
-                    checked={student.isChecked}
-                    onChange={() => toggleSwitch(student.student.id)}
-                  />
-                  <label htmlFor={`simpleSwitch-${student.student.id}`} className={`relative w-10 h-6 transition duration-200 ease-in-out ${
-                      student.isChecked ? 'bg-primary-color' : 'bg-gray-500'
-                    } rounded-full cursor-pointer`}>
-                    <span className={`block absolute left-1 top-1 w-4 h-4 transition duration-200 ease-in-out ${
-                        student.isChecked ? 'transform translate-x-full bg-white' : 'bg-white'
-                      } rounded-full shadow-md`}>
-                    </span>
+                  {student && student.student && (
+                    <input
+                      type="checkbox"
+                      id={`simpleSwitch-${student.student.id}`}
+                      className="hidden"
+                      checked={student.isChecked}
+                      onChange={() => toggleSwitch(student.student.id)}
+                    />
+                  )}
+                  {student.student && (
+                  <label htmlFor={`simpleSwitch-${student.student.id}`} className={`relative w-10 h-6 transition duration-200 ease-in-out ${student.isChecked ? 'bg-primary-color' : 'bg-gray-500'} rounded-full cursor-pointer`}>
+                    <span className={`block absolute left-1 top-1 w-4 h-4 transition duration-200 ease-in-out ${student.isChecked ? 'transform translate-x-full bg-white' : 'bg-white'} rounded-full shadow-md`}></span>
                   </label>
+                  )}
                   <span className="ml-3">{student.isChecked ? 'Habilitado' : 'Desabilitado'}</span>
                 </div>
               </th>
@@ -353,13 +340,6 @@ const Group = () => {
       )}
     </div>
   )
-}
+};
 
-
-const GroupWithProvider = () => (
-  <Provider store={store}>
-    <Group />
-  </Provider>
-);
-
-export default GroupWithProvider;
+export default Group;

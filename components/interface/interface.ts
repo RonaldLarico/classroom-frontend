@@ -1,4 +1,5 @@
 import Student from '../student/Index';
+import Password from '../../assets/icon/Password';
 
 export interface Group {
   studentId: number;
@@ -57,3 +58,10 @@ export interface Student {
   };
   isChecked: boolean;
 }
+
+export interface Admin {
+  user: string;
+  password: string;
+  name: string;
+  role: Role;
+};
