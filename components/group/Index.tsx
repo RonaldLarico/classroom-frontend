@@ -139,25 +139,6 @@ const Group = () => {
           </svg>
         </span>
       </div>
-
-      <div className="relative mb-3 p-2 float-right hidden sm:block">
-        <label htmlFor="inputFilter" className="sr-only">
-          Filter
-        </label>
-        <select
-          id="inputFilter"
-          className="block w-40 rounded-lg border dark:border-none p-2 text-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
-        >
-          <option value="1" selected>
-            Last week
-          </option>
-          <option value="2">Last month</option>
-          <option value="3">Yesterday</option>
-          <option value="4">Last 7 days</option>
-          <option value="5">Last 30 days</option>
-        </select>
-      </div>
-
       <table className="min-w-full text-left text-sm whitespace-nowrap text-gray-600">
         <thead className="uppercase tracking-wider border-b-2 border-error bg-error/35 border-t-2">
           <tr>
@@ -186,7 +167,7 @@ const Group = () => {
           {groupData?.map((group, index) => (
             <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/10">
               <th scope="row" className="px-6 py-4 text-center">
-                {index + 1}
+                {groupData.length - index}
               </th>
               <th scope="row" className="px-6 py-4 text-center">
                 {group.cycle.name}
@@ -221,12 +202,26 @@ const Group = () => {
       </table>
       {showModal && selectedGroup && (
         <ModalTable open={showModal} onClose={closeModal}>
-          <div className="overflow-x-auto mt-5 mb-5 bg-error/15 rounded-2xl">
-          <div className='flex justify-center px-4 gap-96'>
+        <div className="overflow-x-auto bg-error/25 rounded-2xl">
+          <div>
+          <div className="flex p-2 mb-3 mr-5">
+            <label htmlFor="inputSearch" className="sr-only">
+              Search{" "}
+            </label>
+            <input
+              id="inputSearch"
+              type="text"
+              placeholder="Search..."
+              className="block mr-4 w-96 rounded-lg border py-2 pl-2 pr-4 text-sm focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"/>
+            <button className='bg-primary-color px-4 rounded-lg hover:scale-110 duration-300'>
+              <p className='text-gray-200'>Buscar</p>
+            </button>
+          </div>
+          <div className='flex justify-between mt-0 px-4'>
             <div>
               <p className='text-sm font-mono text-primary-color'>Grupo: <span className='text-lg text-error'>{selectedGroup.groupName}</span></p>
             </div>
-            <div className="flex justify-center items-center">
+            <div className="flex items-center">
                   <input
                     type="checkbox"
                     id={`simpleSwitch-`}
@@ -242,10 +237,11 @@ const Group = () => {
                       } rounded-full shadow-md`}>
                     </span>
                   </label>
-                  <span className="ml-3">{selectAllChecked ? 'Habilitado' : 'Desabilitado'}</span>
+                  <span className="ml-3">{selectAllChecked}</span>
                 </div>
-            <div>
-            <p className='text-sm font-mono text-primary-color'>Ciclo: <span className='text-lg text-error'>{selectedGroup.cycle.name}</span></p>
+              <div>
+              <p className='text-sm font-mono text-primary-color'>Ciclo: <span className='text-lg text-error'>{selectedGroup.cycle.name}</span></p>
+              </div>
             </div>
           </div>
           <table className="min-w-full text-left text-sm whitespace-nowrap text-gray-600">

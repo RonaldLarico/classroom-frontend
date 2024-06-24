@@ -25,10 +25,7 @@ export interface StudentData {
   groups: Group[];
 };
 
-export enum Role {
-  ADMIN,
-  USER,
-};
+export type Role = 'ADMIN' | 'USER'
 
 export interface CycleData {
   id: number;
@@ -60,6 +57,7 @@ export interface Student {
 }
 
 export interface Admin {
+  id: number;
   user: string;
   password: string;
   name: string;

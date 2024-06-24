@@ -1,6 +1,5 @@
 
 "use client";
-import { FaRegEdit } from 'react-icons/fa';
 import { FaRegAddressBook } from "react-icons/fa6";
 import React, { useCallback, useEffect, useState } from 'react';
 import axios from 'axios';
@@ -8,17 +7,12 @@ import { useRouteData } from '@/components/hook/hook';
 import tokenConfig, { URL } from '@/components/utils/format/tokenConfig';
 import { Admin } from '@/components/interface/interface';
 import UserRegister from '@/components/routes/user/userRegister';
-//import UserUpdate from '@/components/user/userUpdate';
-//import UserDelete from '@/components/user/userDelete';
-import { FiLogOut } from 'react-icons/fi';
-//import { logout } from '@/components/utils/auth.server';
+import UserDelete from '@/components/routes/user/userDelete';
 
 const User = () => {
   const [userData, setUserData] = useState<Admin[]>();
   const [dataLoading, setDataLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalOpenUpdate, setModalOpenUpdate] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   const token = useRouteData();
 
@@ -33,9 +27,9 @@ const User = () => {
     } catch (error: any) {
       if (error && typeof error === 'object' && 'response' in error) {
       } else if (error instanceof Error) {
-        console.log("Error desconocido", error.message);
+        console.error("Error desconocido", error.message);
       } else {
-        console.log("Error:", error);
+        console.error("Error:", error);
       }
     }
   }, [validToken, setUserData, setDataLoading]);
@@ -43,28 +37,6 @@ const User = () => {
   useEffect(() => {
     onSubmit();
   }, [onSubmit]);
-
-  //UpdateUser
-  const handleEditClick = (userId: number) => {
-    console.log('selectedUserId before update:', selectedUserId);
-    setSelectedUserId(userId);
-    console.log('selectedUserId after update:', selectedUserId);
-    setModalOpenUpdate(true);
-  }
-  const handleUpdateSuccess = async (updateUserId: number) => {
-    try {
-      const url = `${URL()}/users`;
-      const response = await axios.get(url, tokenConfig(validToken));
-      setUserData(response.data);
-      setDataLoading(true);
-    } catch (error) {
-      console.error('Error al obtener la lista de usuarios después de actualizar uno existente:', error);
-    }
-    //setModalOpenUpdate(false);
-  }
-  const handleCloseUpdateForm = () => {
-    setModalOpenUpdate(false);
-  }
 
   //CreateUser
   const handleRegisterSuccess = async (createdUserId: number) => {
@@ -78,6 +50,7 @@ const User = () => {
     }
   }
   const handleCloseCreateForm = () => {
+    onSubmit();
     setModalOpen(false);
   };
   const handleOpenCreateForm = () => {
@@ -89,30 +62,20 @@ const User = () => {
     onSubmit();
   };
 
-   //Logout
-   //const navigate = useNavigate();
-   /* const handleLogout = async () => {
-    await logout();
-  }; */
-
   return (
       <section id="user">
         <div className='flex justify-center mt-5 mb-8'>
         <p className="uppercase border rounded-2xl shadow-2xl text-center text-xl font-bold text-gray-500 p-4">
           Registro de Administradores</p>
         </div>
-        <div className='flex justify-end'>
-        <button
-          type="button"
-          className="text-[#006eb0] uppercase hover:text-white border-2 border-[#006eb0] hover:bg-[#006eb0] focus:ring-4 focus:outline-none font-semibold rounded-lg text-xs px-3 py-2 text-center me-2 dark:hover:text-white dark:focus:ring-[#BFE9FB] inline-flex items-center"
-          onClick={handleOpenCreateForm}>
-            <FaRegAddressBook className='mr-1 text-lg' />
-            Registrar
-        </button>
-        {/* <button type="button" onClick={handleLogout}
-        className="text-red-500 hover:text-white border-2 border-red-500 hover:bg-red-600 focus:ring-4 focus:outline-none focus:ring-red-300 rounded-lg text-xs px-2 py-2 text-center mb-1 me-4 dark:hover:text-white dark:focus:ring-red-200">
-          <FiLogOut className='text-lg' />
-        </button> */}
+        <div className='flex'>
+          <button
+            type="button"
+            className="text-primary-color uppercase hover:text-white border-2 border-primary-color hover:bg-primary-color focus:ring-4 focus:outline-none font-semibold rounded-lg text-xs px-3 py-2 text-center me-2 inline-flex items-center"
+            onClick={handleOpenCreateForm}>
+              <FaRegAddressBook className='mr-1 text-lg' />
+              Registrar
+          </button>
         </div>
         {modalOpen && (
         <UserRegister onCreateSuccess={handleRegisterSuccess} onCloseModal={handleCloseCreateForm} />
@@ -143,7 +106,7 @@ const User = () => {
                 {userData.map((user, index) => (
                   <tr key={index} className="bg-white text-gray-400 font-semibold border-b hover:bg-gray-200">
                     <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
-                      {index + 1}
+                      {userData.length - index}
                     </th>
                     <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
                       {user.user}
@@ -156,30 +119,11 @@ const User = () => {
                     </td>
                     <td>
                       <div className='px-6 py-4 flex justify-center gap-5'>
-                        <div>
-                        {/* <button
-                          onClick={() => handleEditClick(user.id)}
-                          className='border-2 border-green-500 p-0.5 rounded-md text-green-500 transition ease-in-out delay-300 hover:scale-125'>
-                          <div className="text-xl text-default-400 cursor-pointer active:opacity-50">
-                            <FaRegEdit />
+                          <div key={user.id}>
+                            <UserDelete userId={user.id}
+                              onDeleteSuccess={handleDeleteSuccess}
+                            />
                           </div>
-                        </button> */}
-                       {/*  {modalOpenUpdate && (
-                          <UserUpdate
-                            userId={selectedUserId}
-                            onUpdateSuccess={() => handleUpdateSuccess(user.id)}
-                            onCloseModal={handleCloseUpdateForm}
-                          />
-                        )} */}
-                        </div>
-                        {/* {userData.map((user) => ( */}
-                        {/* <div key={user.id}> */}
-                          {/* <UserDelete userId={user.id}
-                          onDeleteSuccess={handleDeleteSuccess}
-                          //onCloseModal={handleCloseDeleteForm}
-                          /> */}
-                        {/* </div> */}
-                        {/* ))} */}
                       </div>
                     </td>
                   </tr>

@@ -11,7 +11,7 @@ const Modal: React.FC<{
       className={`fixed inset-0 p-2 flex justify-center items-center transition-opacity ${overlayClass}`}
       onClick={onClose}>
       <div
-        className={`bg-error/15 rounded-2xl shadow md:p-5 p-2 transition-all max-w-[480px] sm:w-full w-full max-h-screen ${modalClass} flex flex-col items-center overflow-auto`}
+        className={`bg-gray-100 rounded-2xl shadow md:p-5 p-2 transition-all max-w-[480px] sm:w-full w-full max-h-screen ${modalClass} flex flex-col items-center overflow-auto`}
         onClick={(e) => e.stopPropagation()}>
         <button
           className="absolute top-2 right-2 py-1 px-2 border border-neutral-200 rounded-md text-secondary-color bg-white hover:bg-gray-50 hover:text-primary-color"

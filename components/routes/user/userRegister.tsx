@@ -7,7 +7,6 @@ import tokenConfig, { URL } from '@/components/utils/format/tokenConfig';
 import { Admin } from '@/components/interface/interface';
 import PasswordInputs from '@/components/utils/format/passwordHash';
 
-
 interface CreateUserModal {
   onCloseModal: () => void;
   onCreateSuccess: (createdUserId: number) => void;
@@ -22,6 +21,7 @@ const UserRegister: React.FC<CreateUserModal> = ({ onCloseModal, onCreateSuccess
   const [errorModalOpen, setErrorModalOpen] = useState(false);
   const [isUserRegisteredModalOpen, setIsUserRegisteredModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
+
   const token = useRouteData();
   const validToken = typeof token === "string" ? token : '';
 
@@ -78,7 +78,7 @@ const UserRegister: React.FC<CreateUserModal> = ({ onCloseModal, onCreateSuccess
   return (
       <Modal open={dataLoaded} onClose={onCloseModal}>
         <div className="max-w-screen-lg mx-auto border p-4 rounded-xl">
-         <h1 className='text-md text-center font-bold bg-[#006eb0] text-gray-200 border p-2 rounded-lg mb-4 uppercase'>
+         <h1 className='text-md text-center font-bold bg-primary-color text-gray-200 border p-2 rounded-lg mb-4 uppercase'>
         Registrar usuario.
       </h1>
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-2 uppercase text-gray-500 font-bold md:grid-cols-2 gap-2">
@@ -105,7 +105,7 @@ const UserRegister: React.FC<CreateUserModal> = ({ onCloseModal, onCreateSuccess
         <div className="col-span-full flex justify-center">
           <button
             type="submit"
-            className="w-auto uppercase text-sm font-bold sm:w-auto bg-[#006eb0] text-white rounded-lg px-4 py-2 hover:bg-blue-700">
+            className="w-auto uppercase text-sm font-bold sm:w-auto bg-primary-color text-white rounded-lg px-4 py-2 hover:bg-blue-700">
             Registrar
           </button>
         </div>

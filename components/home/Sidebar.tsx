@@ -1,12 +1,9 @@
 "use client"
 import React, { useEffect, useRef, useState } from "react";
-import { MdOutlineDashboard } from "react-icons/md";
-import { RiSettings4Line } from "react-icons/ri";
 import { TbReportAnalytics } from "react-icons/tb";
 import { AiOutlineUser } from "react-icons/ai";
 import { BsBoxArrowRight, BsBoxArrowLeft } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
-import { FiFolder, FiShoppingCart } from "react-icons/fi";
 import { TbLogout2 } from "react-icons/tb";
 import { FaReadme } from "react-icons/fa6";
 import Course from "../course/Index";
@@ -16,22 +13,21 @@ import { getToken, getUserId } from "../hook/hook";
 import axios from "axios";
 import tokenConfig, { URL } from "../utils/format/tokenConfig";
 import Cycle from "../cycle/Index";
-import Group from "../group/Index";
-import Student from "../student/Index";
+import { logout } from "../utils/auth/auth.server";
 
+type RouteComponent = React.ComponentType<{ size: string }>;
 interface Menu {
   name: string;
-  link: React.ComponentType<any> | string; // Puede ser un componente o una cadena (ruta)
+  link: RouteComponent | string;
   icon: React.ComponentType<{ size: string }>;
   margin?: boolean;
-}
+};
 
 const Sidebar: React.FC = () => {
 
   const [open, setOpen] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
-  const searchRef = useRef<HTMLInputElement>(null);
-  const [selectedRoute, setSelectedRoute] = useState<React.ComponentType<{ size: string }> | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<RouteComponent>(() => Course);
   const [studentData, setStudentData] = useState<StudentData | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
 
@@ -44,19 +40,15 @@ const Sidebar: React.FC = () => {
       if (!validToken || !userId) return;
       try {
         const id = userId;
-        console.log("ID", id);
         const url = `${URL()}/student/${id}`;
         const response = await axios.get(url, tokenConfig(validToken));
-
         setStudentData(response.data);
-        //setDataLoading(true);
       } catch (error: any) {
         if (error && typeof error === 'object' && 'response' in error) {
-          console.log(error.response.data);
         } else if (error instanceof Error) {
-          console.log("Error desconocido", error.message);
+          console.error("Error desconocido", error.message);
         } else {
-          console.log("Error:", error);
+          console.error("Error:", error);
         }
       } finally {
         setDataLoading(false)
@@ -66,16 +58,13 @@ const Sidebar: React.FC = () => {
       onSubmit();
     }
   }, [validToken, userId]);
-  console.log("studentData:", studentData)
 
-  const handleSidebarClick = (link: React.ComponentType<{ size: string }> | string) => {
-    setSelectedRoute(() => {
-      if (typeof link === 'string') {
-        return null; // Devuelve null si link es una cadena (por ejemplo, una ruta)
-      } else {
-        return link; // Devuelve el componente de React si link es un componente
-      }
-    });
+  const handleSidebarClick = (link: RouteComponent | string) => {
+    if (typeof link === 'string') {
+      setSelectedRoute(() => null);
+    } else {
+      setSelectedRoute(() => link);
+    }
   };
 
   const handleClickMenu = () => {
@@ -83,15 +72,21 @@ const Sidebar: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleLogout = async () => {
+      await logout();
+  };
+
   const menus: Menu[] = [
-    { name: "dashboard", link: Course, icon: MdOutlineDashboard },
-    { name: "Usuario", link: User, icon: AiOutlineUser },
     { name: "Cursos", link: Course, icon: FaReadme },
-    /* studentData?.role === Role.ADMIN ? { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true } : null,
-    studentData?.role === Role.ADMIN ? { name: "Estudiantes", link: Student, icon: FiFolder } : null, */
-    { name: "Grupo", link: Cycle, icon: TbReportAnalytics, margin: true },
-    { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
-  ].filter(Boolean) as Menu[];
+    ...(studentData?.role === 'ADMIN'
+      ? [
+          { name: "Usuario", link: User, icon: AiOutlineUser, margin: true } as Menu,
+          { name: "Grupo", link: Cycle, icon: TbReportAnalytics, margin: true } as Menu,
+        ]
+      : []
+    ),
+    { name: "Cerrar sesión", link: handleLogout, icon: TbLogout2, margin: true },
+  ].filter(menu => menu !== null && menu !== undefined) as Menu[];
 
   return (
     <div className="flex flex-col min-h-screen overflow-hidden">
@@ -110,7 +105,6 @@ const Sidebar: React.FC = () => {
                 onClick={handleClickMenu}/>
             )}
           </div>
-
           <div className="relative lg:block hidden" data-twe-input-wrapper-init>
             <input
               type="url"
@@ -124,7 +118,6 @@ const Sidebar: React.FC = () => {
             </label>
           </div>
         </div>
-
         {studentData && (
           <div className="text-gray-200 grid grid-cols-3 gap-2">
             <div className="flex justify-end items-center text-5xl">
@@ -134,7 +127,6 @@ const Sidebar: React.FC = () => {
               <p className="truncate">{studentData.user}</p>
               <p className="truncate">{studentData.name}</p>
             </div>
-
             <div className="p-2 font-mono">
               <div className="flex items-center">
                 {studentData.active ? (
@@ -150,13 +142,12 @@ const Sidebar: React.FC = () => {
                 )}
               </div>
               <div className="">
-                <p>{studentData.role ? 'Usuario' : 'Admin'}</p>
+                <p>{studentData.role ? 'USER' : 'ADMIN'}</p>
               </div>
             </div>
           </div>
         )}
       </div>
-
       {/* Contenedor principal para sidebar y contenido */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
@@ -198,7 +189,6 @@ const Sidebar: React.FC = () => {
             </div>
           </div>
         </div>
-
         {/* Contenido principal */}
         <section className="flex-1 px-5 py-5 text-xl text-gray-900 font-semibold overflow-y-auto">
           {selectedRoute && React.createElement(selectedRoute, { size: "80px" })}

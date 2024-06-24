@@ -50,9 +50,9 @@ const Cycle: React.FC = () => {
     } catch (error: any) {
       if (error && typeof error === "object" && "response" in error) {
       } else if (error instanceof Error) {
-        console.log("Error desconocido", error.message);
+        console.error("Error desconocido", error.message);
       } else {
-        console.log("Error:", error);
+        console.error("Error:", error);
       }
     }
   }, [validToken, setCycleData, setDataLoading]);
@@ -61,8 +61,7 @@ const Cycle: React.FC = () => {
     try {
       if (id !== null) {
         await axios.delete(`${URL()}/cycle/${id}`, tokenConfig(validToken));
-        setConfirmationModalOpen(true); // Llamamos a la función de éxito de eliminación
-        getCycles();
+        setConfirmationModalOpen(true);
       }
     } catch (error) {
       console.error('Error al eliminar usuario:', error);
@@ -97,22 +96,22 @@ const Cycle: React.FC = () => {
 
   return (
     <section>
-      <div className="flex justify-between">
-        <div className="flex gap-10">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <button
             onClick={openModal}
-            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
+            className="w-full md-w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
             Registar un ciclo
           </button>
           <button
             onClick={openTableModal}
-            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
+            className="w-full md-w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
             Lista de ciclos
           </button>
         </div>
         <div>
           <button
-            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color"
+            className="w-full md-w-auto uppercase text-sm font-bold sm:w-auto bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-primary-color"
             onClick={handleInsertExcelClick}
           >
             Insertar Excel

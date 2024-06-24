@@ -104,11 +104,21 @@ export async function getUser(req: NextApiRequest) {
   }
 }
 
-export async function logout(req: NextApiRequest, res: NextApiResponse, redirectTo: string = '/auth/logout') {
-  setCookie({ res }, 'userId', '', {
-    maxAge: 0,
-    path: '/',
+const clearAuthToken = () => {
+  return new Promise<void>((resolve) => {
+    localStorage.removeItem('token');
+    resolve();
   });
-  const redirectToUrl = new URL(redirectTo, `http://${req.headers.host}`).toString();
-  res.redirect(redirectToUrl);
-}
+};
+
+const redirectToLogin = () => {
+  return new Promise<void>((resolve) => {
+    window.location.href = '/';
+    resolve();
+  });
+};
+
+export const logout = async () => {
+  await clearAuthToken();
+  await redirectToLogin();
+};
