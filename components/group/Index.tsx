@@ -27,7 +27,7 @@ const Group = () => {
       ...group,
       students: group.students.map((student: any) => ({
         ...student,
-        isChecked: student.isChecked !== undefined ? student.isChecked : false, // Inicializar isChecked para cada estudiante
+        isChecked: student.isChecked !== undefined ? student.isChecked : true, // Inicializar isChecked para cada estudiante
       })),
     }));
     setGroupData(groupsData)
@@ -114,7 +114,7 @@ const Group = () => {
   };
 
   return (
-    <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
+    <div className="overflow-x-auto mt-5 mb-5 bg-error/15 rounded-2xl">
       <div className="relative p-2 mb-3 mr-5 float-left">
         <label htmlFor="inputSearch" className="sr-only">
           Search{" "}
@@ -159,24 +159,24 @@ const Group = () => {
       </div>
 
       <table className="min-w-full text-left text-sm whitespace-nowrap text-gray-600">
-        <thead className="uppercase tracking-wider border-b-2 border-primary-color bg-primary-color/35 border-t">
+        <thead className="uppercase tracking-wider border-b-2 border-error bg-error/35 border-t-2">
           <tr>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               #
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               Nombre del ciclo
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               Nombre del grupo
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               Fecha
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               Estudiantes
             </th>
-            <th scope="col" className="px-6 py-4 border-x border-primary-color text-center">
+            <th scope="col" className="px-6 py-4 text-center">
               Acción
             </th>
           </tr>
@@ -184,7 +184,7 @@ const Group = () => {
 
         <tbody>
           {groupData?.map((group, index) => (
-            <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/50">
+            <tr key={index} className="border-b border-secondary-color hover:bg-secondary-color/10">
               <th scope="row" className="px-6 py-4 text-center">
                 {index + 1}
               </th>
@@ -221,7 +221,7 @@ const Group = () => {
       </table>
       {showModal && selectedGroup && (
         <ModalTable open={showModal} onClose={closeModal}>
-          <div className="overflow-x-auto mt-5 mb-5 bg-secondary-color-gradient rounded-2xl">
+          <div className="overflow-x-auto mt-5 mb-5 bg-error/15 rounded-2xl">
           <div className='flex justify-center px-4 gap-96'>
             <div>
               <p className='text-sm font-mono text-primary-color'>Grupo: <span className='text-lg text-error'>{selectedGroup.groupName}</span></p>

@@ -7,6 +7,7 @@ import axios from "axios";
 import { CycleData } from "../interface/interface";
 import Modal from "../share/Modal";
 import Student from "../student/Index";
+import Group from "../group/Index";
 
 const Cycle: React.FC = () => {
   const [cycleData, setCycleData] = useState<CycleData[]>();
@@ -32,7 +33,7 @@ const Cycle: React.FC = () => {
       const createdUserId = response.data.id;
       setRegisteredModal(true);
     } catch (error) {
-      console.error("Error al agregar un nuevo usuario:", error);
+      console.error("Error al agregar un nuevo ciclo:", error);
       setError(
         "Hubo un error al registrar un ciclo. Por favor, intenta nuevamente."
       );
@@ -97,32 +98,36 @@ const Cycle: React.FC = () => {
   return (
     <section>
       <div className="flex justify-between">
-        <button
-          onClick={openModal}
-          className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color">
-          Registar un ciclo
-        </button>
-        <button
-          onClick={openTableModal}
-          className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color">
-          Lista de ciclos
-        </button>
-      <button
-        className="w-auto uppercase text-sm font-bold sm:w-auto bg-secondary-color text-white rounded-lg px-4 py-2 hover:bg-primary-color"
-        onClick={handleInsertExcelClick}
-      >
-        Insertar Excel
-      </button>
-
+        <div className="flex gap-10">
+          <button
+            onClick={openModal}
+            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
+            Registar un ciclo
+          </button>
+          <button
+            onClick={openTableModal}
+            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color">
+            Lista de ciclos
+          </button>
+        </div>
+        <div>
+          <button
+            className="w-auto uppercase text-sm font-bold sm:w-auto bg-error text-white rounded-lg px-4 py-2 hover:bg-primary-color"
+            onClick={handleInsertExcelClick}
+          >
+            Insertar Excel
+          </button>
+        </div>
       {showStudent && <Student show={showStudent} onClose={closeModal} />}
       </div>
+      <Group />
       <Modal open={showForm} onClose={closeModal}>
         <div className="mt-3 mb-3 px-4">
           <form
             onSubmit={handleSubmit(createCycle)}
-            className="grid grid-cols-2 uppercase text-gray-500 font-bold md:grid-cols-2 gap-2">
+            className="grid grid-cols-2 uppercase text-gray-700 font-bold md:grid-cols-2 gap-2">
             <div className="mb-4 text-sm col-span-full  w-full">
-              <label className="text-gray-100">Nombre del ciclo:</label>
+              <label className="text-gray-700">Nombre del ciclo:</label>
               <input
                 {...register("name", { required: true })}
                 className="border rounded-lg p-2 w-full"/>

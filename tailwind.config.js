@@ -14,7 +14,7 @@ module.exports = {
         ///BRAND
         "primary-color": "#374BF6",
         "primary-color-gradient": "#B8E4F3",
-        "secondary-color": "#9381E5",
+        "secondary-color": "#E84855",
         "secondary-color-gradient": "#CBC6E4",
         //NEUTRO
         "title-color": "#000000",

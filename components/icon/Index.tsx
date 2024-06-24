@@ -11,10 +11,9 @@ const Icon = ({ iconName, className, ...props }: IconProps) => {
   const IconComponent = Icons[iconName];
   const styles = clsx(
     "flex items-center justify-center",
-    "w-6 h-6 p-0.5",
+    "w-8 h-0 p-0.5",
     className
   );
-
   return (
     <div className={styles}>
       <IconComponent className="m-auto" {...props} />

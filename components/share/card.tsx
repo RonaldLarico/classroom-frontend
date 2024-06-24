@@ -4,6 +4,7 @@ import { MdOutlineDateRange, MdOutlineDatasetLinked } from 'react-icons/md';
 import { CgProfile } from "react-icons/cg";
 import Modal from './Modal';
 import ModalTable from './ModalTable';
+import Image from 'next/image';
 
 interface LinkObject {
   text: string;
@@ -70,7 +71,7 @@ const Card: React.FC<CardProps> = ({
             <title>External Content</title>
           </head>
           <body style="margin: 0; padding: 0; overflow: hidden;">
-            <iframe src="${url}" style="border: none; width: 100%; height: 100vh;"></iframe>
+            <iframe src="${url}" sandbox="allow-same-origin allow-scripts" style="border: none; width: 100%; height: 100vh;"></iframe>
           </body>
         </html>
       `;
@@ -101,7 +102,7 @@ const Card: React.FC<CardProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="h-[400px] w-[300px] bg-gray-100 shadow-xl shadow-gray-500 mx-auto rounded-xl overflow-hidden"
+      className="h-[400px] w-[300px] mb-10 bg-gray-100 shadow-xl shadow-gray-500 mx-auto rounded-xl overflow-hidden"
     >
       <motion.img
         initial={{ opacity: 0 }}
@@ -117,7 +118,7 @@ const Card: React.FC<CardProps> = ({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          className='text-red-600 font-bold ml-5 text-[20px] pt-[250px] font-mono'
+          className='text-error font-bold ml-5 text-[20px] pt-[250px] font-mono'
         >
           {Array.isArray(title) ? title.join(', ') : title}
         </motion.p>
@@ -176,10 +177,9 @@ const Card: React.FC<CardProps> = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1.2 }}
-        className='flex'
+        className='flex justify-center mt-3'
       >
-        <CgProfile className='w-[40px] h-[40px] border-solid rounded-full mt-[10px] ml-5 text-gray-700' />
-          <p className='text-gray-700 mt-[16px] ml-2'>{creatorName}</p>
+          <Image src="/Image/logo_cokito.png" alt="Cokito" width={800} height={800} className="h-12 w-40"/>
       </motion.div>
       {/* Modal para mostrar el iframe */}
       <ModalTable open={isModalOpen} onClose={closeModal}>

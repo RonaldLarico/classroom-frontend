@@ -70,14 +70,14 @@ const Student: React.FC<StudentProps> = ({ show, onClose }) => {
         </form>
         {insertionSuccess && (
           <Modal open={true} onClose={closeModal}>
-            <div className='font-bold border p-3 rounded-xl text-gray-200'>
+            <div className='font-bold border-2 border-error p-3 rounded-xl text-[#006eb0]'>
               <p className='flex justify-center'>Inserción exitosa.</p>
             </div>
           </Modal>
         )}
         {errorMessage && (
           <Modal open={true} onClose={() => setErrorMessage('')}>
-            <div className='font-bold border p-3 rounded-xl text-gray-200'>
+            <div className='font-bold border p-3 rounded-xl text-error'>
               <p className='flex justify-center'>{errorMessage}</p>
             </div>
           </Modal>

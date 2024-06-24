@@ -85,14 +85,11 @@ const Sidebar: React.FC = () => {
 
   const menus: Menu[] = [
     { name: "dashboard", link: Course, icon: MdOutlineDashboard },
-    { name: "user", link: User, icon: AiOutlineUser },
+    { name: "Usuario", link: User, icon: AiOutlineUser },
     { name: "Cursos", link: Course, icon: FaReadme },
     /* studentData?.role === Role.ADMIN ? { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true } : null,
     studentData?.role === Role.ADMIN ? { name: "Estudiantes", link: Student, icon: FiFolder } : null, */
-    { name: "Ciclo", link: Cycle, icon: TbReportAnalytics, margin: true },
-    { name: "Grupo", link: Group, icon: FiFolder },
-    { name: "Cart", link: Student, icon: FiShoppingCart },
-    { name: "Setting", link: "/", icon: RiSettings4Line },
+    { name: "Grupo", link: Cycle, icon: TbReportAnalytics, margin: true },
     { name: "Cerrar sesión", link: "/", icon: TbLogout2, margin: true },
   ].filter(Boolean) as Menu[];
 
@@ -148,7 +145,7 @@ const Sidebar: React.FC = () => {
                 ) : (
                   <div className="flex items-center">
                     <p className="mr-2">Inactivo</p>
-                    <div className="h-3 w-3 bg-red-500 rounded-full mr-1"></div>
+                    <div className="h-3 w-3 bg-error rounded-full mr-1"></div>
                   </div>
                 )}
               </div>

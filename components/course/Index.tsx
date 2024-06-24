@@ -68,12 +68,12 @@ console.log("studentData:", studentData)
           return (
             <Card
                 key={groupIndex}
-                imageUrl='/image/sociales.png'
+                imageUrl='/image/ciencias.jpg'
                 title={groupName}
                 link={courseLink}
                 date={date}
                 cycleName={cycleName}
-                creatorName='Cokito mas'
+                creatorName=''
               />
           );
         })

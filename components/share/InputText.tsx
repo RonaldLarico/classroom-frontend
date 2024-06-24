@@ -21,7 +21,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(function Input(
   return (
     <div className={`${className} flex flex-col w-full rounded-md`}>
       {label && (
-        <label className="text-text-color text-title-content font-bold">
+        <label className="text-text-color text-title-content font-semibold">
           {label}
         </label>
       )}
@@ -37,7 +37,7 @@ const InputText = forwardRef<HTMLInputElement, InputTextProps>(function Input(
             border
               ? "border-primary-color cursor-not-allowed text-placeholder-color"
               : "border-placeholder-color text-text-color"
-          }  h-[30px] bg-transparent`}
+          }  h-[40px] bg-transparent`}
         />
       </div>
       <span className="text-error font-semibold w-full text-xs">
